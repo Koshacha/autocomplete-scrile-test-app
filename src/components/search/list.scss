@@ -1,0 +1,57 @@
+.list {
+  padding: 8px 0;
+  flex: 1;
+  position: relative;
+
+  &__item {
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover,
+    &:active,
+    &:focus {
+      background: #F2F2F2;
+    }
+  }
+
+  &__picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 8px;
+    border: 1px solid #E5E5E6;
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__inner {
+
+  }
+
+  &__title {
+    font-size: 14px;
+    line-height: 19px;
+    color: #000000;
+  }
+
+  &__subtitle {
+    font-size: 12px;
+    line-height: 16px;
+    color: #98999A;
+  }
+
+  &__loading {
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    right: 0;
+  }
+}

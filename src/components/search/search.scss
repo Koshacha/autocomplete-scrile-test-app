@@ -1,0 +1,43 @@
+.search {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  background: #FAFAFA;
+  border-bottom: 1px solid #262626;
+
+  &-app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  &__input {
+    flex-grow: 1;
+    border: none;
+    font-size: 16px;
+    line-height: 22px;
+    color: #000000;
+
+    &::placeholder {
+      color: #CCC5C4;
+    }
+
+    &:active,
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__button {
+    padding: 10px;
+    background: transparent;
+    border: unset;
+    margin-right: 5px;
+    cursor: pointer;
+
+    &:active,
+    &:focus {
+      outline: none;
+    }
+  }
+}
