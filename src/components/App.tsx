@@ -10,13 +10,18 @@ import IUser from '../interfaces/IUser';
 const App: FunctionComponent = () => {
   const [isLoading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<IUser[]>([]);
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setQuery(e.target.value);
   };
 
-  const keyPressHandler = ( { code }: React.KeyboardEvent<HTMLInputElement>): void => {
+  const selectHandler = (id: number) => () => {
+    const user = _.find(results,{ id });
+    user && setQuery(user.name);
+  };
+
+  const keyPressHandler = (id: number) => ( { code }: React.KeyboardEvent<HTMLInputElement>): void => {
     const activeNode = document.activeElement as HTMLDivElement;
     const {
       previousElementSibling: prevNode,
@@ -29,6 +34,8 @@ const App: FunctionComponent = () => {
     } else if (code === 'ArrowUp' && prevNode) {
       activeNode.blur();
       (prevNode as HTMLDivElement).focus();
+    } else if (code === 'Enter') {
+      selectHandler(id)();
     }
   };
 
@@ -65,9 +72,10 @@ const App: FunctionComponent = () => {
   );
 
   useEffect(() => {
-    if (query.length) {
+    const searchQuery = query.trim();
+    if (searchQuery.length) {
       setLoading(true);
-      fetchItems(query);
+      fetchItems(searchQuery);
     } else {
       setLoading(false);
     }
@@ -88,7 +96,8 @@ const App: FunctionComponent = () => {
                   name={el.name}
                   username={el.username}
                   picture={el.picture}
-                  inputHandler={keyPressHandler}
+                  inputHandler={keyPressHandler(el.id)}
+                  clickHandler={selectHandler(el.id)}
                 />
               })
             }

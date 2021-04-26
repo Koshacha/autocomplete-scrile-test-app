@@ -11,16 +11,19 @@
     height: 100vh;
   }
 
-  &__input {
+  &__field-inner {
     flex-grow: 1;
+    position: relative;
+  }
+
+  &__input {
+    width: 100%;
     border: none;
     font-size: 16px;
     line-height: 22px;
     color: #000000;
     background: transparent;
-    font-family: 'Noto Sans', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    font-family: inherit;
 
     &::placeholder {
       color: #CCC5C4;
