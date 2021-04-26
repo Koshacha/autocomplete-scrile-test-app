@@ -17,6 +17,10 @@
     font-size: 16px;
     line-height: 22px;
     color: #000000;
+    background: transparent;
+    font-family: 'Noto Sans', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
 
     &::placeholder {
       color: #CCC5C4;

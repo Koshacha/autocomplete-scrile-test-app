@@ -1,5 +1,5 @@
 import {FunctionComponent} from "react";
-import './list.scss';
+import './SearchResults.scss';
 
 const SearchResults: FunctionComponent = ({children }) => {
     return (

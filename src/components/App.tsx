@@ -4,14 +4,8 @@ import SearchResults from "./search/SearchResults";
 import FoundItem from "./search/FoundItem";
 import Loading from "./loading/Loading";
 import routes from "../utils/routes";
-import _ from "lodash";
-
-interface IUser {
-  id: number,
-  name: string,
-  username: string,
-  picture: string
-}
+import _, {debounce} from "lodash";
+import IUser from '../interfaces/IUser';
 
 const App: FunctionComponent = () => {
   const [isLoading, setLoading] = useState(false);
@@ -22,28 +16,50 @@ const App: FunctionComponent = () => {
     setQuery(e.target.value);
   };
 
-  const fetchItems = useCallback(
-    _.debounce(async (query) => {
-      const searchQuery = query.toLocaleLowerCase();
-      const [usersResponse, photosResponse] = await Promise.all([fetch(routes.users()), fetch(routes.photos())]);
-      if (usersResponse.ok && photosResponse.ok) {
-        let users = await usersResponse.json();
-        let images = await photosResponse.json();
+  const keyPressHandler = ( { code }: React.KeyboardEvent<HTMLInputElement>): void => {
+    const activeNode = document.activeElement as HTMLDivElement;
+    const {
+      previousElementSibling: prevNode,
+      nextElementSibling: nextNode
+    } = activeNode;
 
-        users = await _(users)
-          .filter(({ name, username }) => {
-            return _.includes(name.toLocaleLowerCase(), searchQuery) || _.includes(username.toLocaleLowerCase(), searchQuery);
-          })
-          .map(({ id, ...rest}) => {
-            const picture = _(images)
-              .find({ id })
-              .thumbnailUrl;
-            return {id, picture, ...rest};
-          })
-          .valueOf();
-        setResults(users);
-        setLoading(false);
-      }
+    if (code === 'ArrowDown' && nextNode) {
+      activeNode.blur();
+      (nextNode as HTMLDivElement).focus();
+    } else if (code === 'ArrowUp' && prevNode) {
+      activeNode.blur();
+      (prevNode as HTMLDivElement).focus();
+    }
+  };
+
+  const fetchItems = useCallback(
+    debounce(async (query) => {
+      const [usersResponse, photosResponse] = await Promise.all([
+        fetch(routes.users()),
+        fetch(routes.photos())
+      ]);
+
+      let users = await usersResponse.json();
+      let images = await photosResponse.json();
+
+      const searchQuery = new RegExp(query, 'i');
+
+      users = _(users)
+        .filter(({ name, username }) => {
+          return searchQuery.test(name) || searchQuery.test(username);
+        })
+        .map(({ id, ...rest }) => {
+          const pic = _(images).find({ id });
+          return {
+            id,
+            picture: pic.thumbnailUrl,
+            ...rest
+          };
+        })
+        .valueOf();
+
+      setResults(users);
+      setLoading(false);
     }, 500),
     []
   );
@@ -63,22 +79,24 @@ const App: FunctionComponent = () => {
         query={query}
         inputHandler={onChangeHandler} />
       {
-        isLoading ? (
-          <div className="list__loading">
-            <Loading/>
-          </div>
-        ) : (
+        isLoading ? <Loading/> : (
           query.length > 0 && <SearchResults>
             {
-              results.map((el: IUser, index) => {
-                return <FoundItem key={el.id} name={el.name} username={el.username} picture={el.picture}/>
+              results.map((el: IUser) => {
+                return <FoundItem
+                  key={el.id}
+                  name={el.name}
+                  username={el.username}
+                  picture={el.picture}
+                  inputHandler={keyPressHandler}
+                />
               })
             }
           </SearchResults>
         )
       }
     </div>
-  )
+  );
 };
 
 export default App;
